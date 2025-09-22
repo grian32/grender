@@ -51,3 +51,33 @@ func TestAtlas(t *testing.T) {
 		t.Errorf("EncodeAtlas=%v, want match for %v", enc.Bytes(), expectedBytes)
 	}
 }
+
+func BenchmarkAtlas(b *testing.B) {
+	tex1, err := NewTexture("./testdata/tex1.jxl")
+	if err != nil {
+		b.Errorf("read tex1.jxl: %v", err)
+	}
+	tex2, err := NewTexture("./testdata/tex2.jxl")
+	if err != nil {
+		b.Errorf("read tex2.jxl: %v", err)
+	}
+	tex3, err := NewTexture("./testdata/tex3.jxl")
+	if err != nil {
+		b.Errorf("read tex3.jxl: %v", err)
+	}
+	tex4, err := NewTexture("./testdata/tex4.jxl")
+	if err != nil {
+		b.Errorf("read tex4.jxl: %v", err)
+	}
+
+	b.ResetTimer()
+
+	for b.Loop() {
+		atlas := NewAtlas(8092)
+
+		atlas.AddTexture(tex1)
+		atlas.AddTexture(tex2)
+		atlas.AddTexture(tex3)
+		atlas.AddTexture(tex4)
+	}
+}
