@@ -38,14 +38,12 @@ func main() {
 
 	atlas.Upload()
 
-	r := grender.NewRenderer(atlas)
-
-	defer r.Cleanup()
-
-	err = r.InitGL()
+	r, err := grender.NewRenderer(atlas)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	defer r.Cleanup()
 
 	for grender.WindowShouldNotClose() {
 		// loop logic here

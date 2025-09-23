@@ -53,15 +53,12 @@ void main() {
 }
 `
 
-func NewRenderer(atlas *Atlas) *Renderer {
-	return &Renderer{
+func NewRenderer(atlas *Atlas) (*Renderer, error) {
+	r := &Renderer{
 		Atlas:      atlas,
 		atlasRects: make([]float32, 0),
 	}
-}
 
-// InitGL meant to be called once after initializing the Renderer via NewRenderer
-func (r *Renderer) InitGL() error {
 	vertices := []float32{
 		// pos, tex coord
 		1.0, 1.0, 0.0, 1.0, 1.0,
@@ -114,7 +111,7 @@ func (r *Renderer) InitGL() error {
 
 	shaderId, err := util.CompileGLShader(vertShader, fragShader)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	r.shader = shaderId
@@ -124,7 +121,7 @@ func (r *Renderer) InitGL() error {
 	projLoc := gl.GetUniformLocation(r.shader, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projLoc, 1, false, &projection[0])
 
-	return nil
+	return r, nil
 }
 
 func (r *Renderer) DrawTexture(t *Texture, x, y uint32) {
