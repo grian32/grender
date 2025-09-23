@@ -138,6 +138,20 @@ func (r *Renderer) DrawTexture(t *Texture, x, y uint32) {
 	)
 }
 
+func (r *Renderer) DrawColorTexture(t *Texture, x, y, w, h uint32) {
+	atlasOffsetX := float32(t.AtlasPos.X) / float32(r.Atlas.Size)
+	atlasOffsetY := float32(t.AtlasPos.Y) / float32(r.Atlas.Size)
+	atlasScaleX := float32(t.Size.X) / float32(r.Atlas.Size)
+	atlasScaleY := float32(t.Size.Y) / float32(r.Atlas.Size)
+
+	r.atlasRects = append(r.atlasRects,
+		atlasOffsetX, atlasOffsetY,
+		atlasScaleX, atlasScaleY,
+		float32(x), float32(y),
+		float32(w), float32(h),
+	)
+}
+
 func (r *Renderer) Begin() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 

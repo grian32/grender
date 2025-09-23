@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/color"
 	"image/draw"
 	"os"
 
@@ -80,4 +81,15 @@ func NewTextureB(b []byte) (*Texture, error) {
 	tex.Size.Y = int32(jxl.Bounds().Dy())
 
 	return tex, nil
+}
+
+func NewTextureColor(r, g, b uint8) *Texture {
+	img := image.NewNRGBA(image.Rect(0, 0, 1, 1))
+	img.Set(0, 0, color.NRGBA{r, g, b, 255})
+
+	return &Texture{
+		Image:    img,
+		Size:     Vec2I{X: 1, Y: 1},
+		AtlasPos: RectP{},
+	}
 }
