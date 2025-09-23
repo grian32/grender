@@ -4,9 +4,6 @@ import (
 	"grender"
 	"log"
 	"runtime"
-
-	"github.com/go-gl/gl/v3.3-core/gl"
-	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func init() {
@@ -14,24 +11,11 @@ func init() {
 }
 
 func main() {
-	if err := glfw.Init(); err != nil {
-		log.Fatalln(err)
-	}
-	defer glfw.Terminate()
-
-	glfw.WindowHint(glfw.ContextVersionMajor, 3)
-	glfw.WindowHint(glfw.ContextVersionMinor, 3)
-	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
-
-	window, err := glfw.CreateWindow(640, 480, "GRender Test", nil, nil)
+	err := grender.CreateWindow(640, 480, "GRender Test")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	window.MakeContextCurrent()
-
-	if err := gl.Init(); err != nil {
-		log.Fatalln(err)
-	}
+	defer grender.CloseWindow()
 
 	tex1, err := grender.NewTexture("../testdata/tex1.jxl")
 	if err != nil {
@@ -56,16 +40,15 @@ func main() {
 
 	r := grender.NewRenderer(atlas)
 
+	defer r.Cleanup()
+
 	err = r.InitGL()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	r.SetScreenSize(640, 480)
-
-	for !window.ShouldClose() {
-		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
+	for grender.WindowShouldNotClose() {
+		// loop logic here
 		r.Begin()
 
 		r.DrawTexture(tex1, 0, 0)
@@ -73,8 +56,5 @@ func main() {
 		r.DrawTexture(tex3, uint32(tex1.Size.X+tex2.Size.X), 0)
 
 		r.End()
-
-		window.SwapBuffers()
-		glfw.PollEvents()
 	}
 }

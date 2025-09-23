@@ -6,6 +6,7 @@ import (
 	"unsafe"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -118,16 +119,12 @@ func (r *Renderer) InitGL() error {
 
 	r.shader = shaderId
 
-	return nil
-}
-
-// SetScreenSize must be called after InitGL
-func (r *Renderer) SetScreenSize(w, h uint32) {
-	projection := mgl32.Ortho(0, float32(w), float32(h), 0, -1, 1)
-
+	projection := mgl32.Ortho(0, float32(windowWidth), float32(windowHeight), 0, -1, 1)
 	gl.UseProgram(r.shader)
 	projLoc := gl.GetUniformLocation(r.shader, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projLoc, 1, false, &projection[0])
+
+	return nil
 }
 
 func (r *Renderer) DrawTexture(t *Texture, x, y uint32) {
@@ -135,8 +132,6 @@ func (r *Renderer) DrawTexture(t *Texture, x, y uint32) {
 	atlasOffsetY := float32(t.AtlasPos.Y) / float32(r.Atlas.Size)
 	atlasScaleX := float32(t.Size.X) / float32(r.Atlas.Size)
 	atlasScaleY := float32(t.Size.Y) / float32(r.Atlas.Size)
-
-	log.Printf("Atlas Offset=(%.8f, %.8f) scale=(%.8f, %.8f)", atlasOffsetX, atlasOffsetY, atlasScaleX, atlasScaleY)
 
 	r.atlasRects = append(r.atlasRects,
 		atlasOffsetX, atlasOffsetY,
@@ -147,6 +142,8 @@ func (r *Renderer) DrawTexture(t *Texture, x, y uint32) {
 }
 
 func (r *Renderer) Begin() {
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
 	gl.UseProgram(r.shader)
 	gl.BindVertexArray(r.vao)
 
@@ -173,4 +170,17 @@ func (r *Renderer) End() {
 
 	gl.BindVertexArray(0)
 	gl.UseProgram(0)
+
+	glfwWindow.SwapBuffers()
+	glfw.PollEvents()
+}
+
+// Cleanup should be defer after grender.CloseWindow()
+func (r *Renderer) Cleanup() {
+	gl.DeleteVertexArrays(1, &r.vao)
+	gl.DeleteBuffers(1, &r.vbo)
+	gl.DeleteBuffers(1, &r.ebo)
+	gl.DeleteBuffers(1, &r.ebo)
+	gl.DeleteProgram(r.shader)
+	gl.DeleteTextures(1, &r.Atlas.texId)
 }
