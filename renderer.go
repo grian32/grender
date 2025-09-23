@@ -1,6 +1,7 @@
 package grender
 
 import (
+	"grender/util"
 	"unsafe"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
@@ -51,7 +52,8 @@ func NewRenderer(atlas *Atlas) *Renderer {
 	}
 }
 
-func (r *Renderer) InitGL() {
+// InitGL meant to be called once after initializing the Renderer via NewRenderer
+func (r *Renderer) InitGL() error {
 	vertices := []float32{
 		// pos, tex coord
 		0.5, 0.5, 0.0, 1.0, 1.0,
@@ -97,4 +99,26 @@ func (r *Renderer) InitGL() {
 	gl.VertexAttribPointer(4, 2, gl.FLOAT, false, 6*4, unsafe.Pointer(uintptr(4*4)))
 	gl.EnableVertexAttribArray(4)
 	gl.VertexAttribDivisor(4, 1)
+
+	shaderId, err := util.CompileGLShader(vertShader, fragShader)
+	if err != nil {
+		return err
+	}
+
+	r.shader = shaderId
+
+	return nil
+}
+
+func (r *Renderer) DrawTexture(t *Texture, x, y uint32) {
+	atlasOffsetX := t.AtlasPos.X / int32(r.Atlas.Size)
+	atlasOffsetY := t.AtlasPos.Y / int32(r.Atlas.Size)
+	atlasScaleX := t.AtlasPos.W / int32(r.Atlas.Size)
+	atlasScaleY := t.AtlasPos.H / int32(r.Atlas.Size)
+
+	r.atlasRects = append(r.atlasRects,
+		float32(atlasOffsetX), float32(atlasOffsetY),
+		float32(atlasScaleX), float32(atlasScaleY),
+		float32(x), float32(y),
+	)
 }

@@ -12,7 +12,7 @@ import (
 
 // Atlas ref impl: https://github.com/juj/RectangleBinPack/blob/83e7e1132d93777e3732dfaae26b0f3703be2036/MaxRectsBinPack.cpp
 type Atlas struct {
-	Size                 Vec2I
+	Size                 uint32
 	FreeRects            []RectP
 	usedRectangles       []RectP
 	newFreeRectsLastSize int
