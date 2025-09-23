@@ -34,7 +34,7 @@ func NewAtlas(opts ...AtlasOption) *Atlas {
 	}
 
 	return &Atlas{
-		Size:      Vec2I{X: maxTextureSize, Y: maxTextureSize},
+		Size:      uint32(maxTextureSize),
 		FreeRects: []RectP{{0, 0, maxTextureSize, maxTextureSize}},
 		Img:       image.NewNRGBA(image.Rect(0, 0, int(maxTextureSize), int(maxTextureSize))),
 	}
