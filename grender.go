@@ -1,12 +1,18 @@
 package grender
 
 import (
+	"runtime"
+
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 var glfwWindow *glfw.Window
 var windowWidth, windowHeight uint32
+
+func init() {
+	runtime.LockOSThread()
+}
 
 func CreateWindow(width, height uint32, title string) error {
 	if err := glfw.Init(); err != nil {

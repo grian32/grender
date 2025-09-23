@@ -3,12 +3,7 @@ package main
 import (
 	"grender"
 	"log"
-	"runtime"
 )
-
-func init() {
-	runtime.LockOSThread()
-}
 
 func main() {
 	err := grender.CreateWindow(640, 480, "GRender Test")
