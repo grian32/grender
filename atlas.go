@@ -17,11 +17,13 @@ type Atlas struct {
 	usedRectangles       []RectP
 	newFreeRectsLastSize int
 	newFreeRects         []RectP
+	texId                uint32
 	Img                  *image.NRGBA
 }
 
 type AtlasOption int32
 
+// NewAtlas the size can be passed in as one of the options, i.e NewAtlas(8092), if this is not passed in, the atlas defaults to the gl max texture size, which in some cases may be unnecessarily massive.
 func NewAtlas(opts ...AtlasOption) *Atlas {
 	if len(opts) > 1 {
 		log.Fatalln("more than one opts int to new atlas")
@@ -38,6 +40,19 @@ func NewAtlas(opts ...AtlasOption) *Atlas {
 		FreeRects: []RectP{{0, 0, maxTextureSize, maxTextureSize}},
 		Img:       image.NewNRGBA(image.Rect(0, 0, int(maxTextureSize), int(maxTextureSize))),
 	}
+}
+
+// Upload uploads the atlas texture to the GPU, must be called before Renderer.Begin() & after all textures are added to the atlas but can be called before or after Renderer.InitGL()
+func (a *Atlas) Upload() {
+	var texId uint32
+	gl.GenTextures(1, &texId)
+	gl.BindTexture(gl.TEXTURE_2D, texId)
+
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, int32(a.Size), int32(a.Size), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(a.Img.Pix))
+	a.texId = texId
 }
 
 func (a *Atlas) AddTexture(t *Texture) {
