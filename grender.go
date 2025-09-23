@@ -17,15 +17,16 @@ func CreateWindow(width, height uint32, title string) error {
 	glfw.WindowHint(glfw.ContextVersionMinor, 3)
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 
-	glfwWindow, err := glfw.CreateWindow(int(width), int(height), title, nil, nil)
+	window, err := glfw.CreateWindow(int(width), int(height), title, nil, nil)
 	if err != nil {
 		return err
 	}
-	glfwWindow.MakeContextCurrent()
+	window.MakeContextCurrent()
 
 	if err := gl.Init(); err != nil {
 		return err
 	}
+	glfwWindow = window
 	windowWidth = width
 	windowHeight = height
 
