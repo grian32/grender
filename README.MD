@@ -11,11 +11,11 @@ GRender was created as a replacement for Raylib for [GRPG](https://github.com/gr
 
 - Texture management & automatic atlasing.
 - Rendering API.
+- API for rendering solid color primitives.
 
 ## Planned Features
 
 - Text Rendering
-- API for rendering solid color primitives.
 - Input Handling
 - API for providing lighting along with the necessary shaders.
 
