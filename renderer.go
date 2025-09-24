@@ -231,6 +231,7 @@ func (r *Renderer) Cleanup() {
 }
 
 // WaitTime conceptually from https://github.com/raysan5/raylib/blob/9e39788e077f1d35c5fe54600f2143423a80bb3d/src/rcore.c#L1671
+// NOTE: while go's time.Sleep does support high accuracy timers on all OS, while using it, the fps' were tied to around 57-58 with a target of 60. therefore spinwaiting is required
 func WaitTime(seconds float64) {
 	if seconds < 0 {
 		return
