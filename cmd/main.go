@@ -56,6 +56,24 @@ func main() {
 		if grender.IsKeyReleased(grender.N) {
 			log.Printf("release n\n")
 		}
+
+		if grender.IsMouseButtonPressed(grender.MouseLeft) {
+			log.Printf("pressing mouse button left")
+		}
+
+		if grender.IsMouseButtonDown(grender.MouseRight) {
+			log.Printf("down mouse button right")
+		}
+
+		if grender.IsMouseButtonReleased(grender.MouseMiddle) {
+			log.Printf("released mouse button middle")
+		}
+
+		// commented out as is spammy
+		//if grender.IsMouseButtonUp(grender.Mouse4) {
+		//	log.Printf("up mouse button 4")
+		//}
+
 		r.Begin()
 
 		r.DrawTexture(tex1, 0, 0)

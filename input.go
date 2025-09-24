@@ -3,8 +3,10 @@ package grender
 import "github.com/go-gl/glfw/v3.3/glfw"
 
 type Input struct {
-	prevKeys map[glfw.Key]bool
-	currKeys map[glfw.Key]bool
+	prevKeys    map[glfw.Key]bool
+	currKeys    map[glfw.Key]bool
+	prevButtons map[glfw.MouseButton]bool
+	currButtons map[glfw.MouseButton]bool
 }
 
 func (i *Input) Update() {
@@ -12,8 +14,16 @@ func (i *Input) Update() {
 		i.prevKeys[k] = v
 	}
 
+	for k, v := range i.currButtons {
+		i.prevButtons[k] = v
+	}
+
 	for k := glfw.KeySpace; k <= glfw.KeyLast; k++ {
 		i.currKeys[k] = glfwWindow.GetKey(k) == glfw.Press
+	}
+
+	for k := glfw.MouseButton1; k <= glfw.MouseButtonLast; k++ {
+		i.currButtons[k] = glfwWindow.GetMouseButton(k) == glfw.Press
 	}
 }
 
@@ -273,7 +283,6 @@ var grenderKeyToGlfw = map[Key]glfw.Key{
 	Last:         glfw.KeyLast,
 }
 
-// TODO: decouple from glfw here
 func IsKeyDown(k Key) bool {
 	return inputManager.currKeys[grenderKeyToGlfw[k]]
 }
@@ -284,4 +293,44 @@ func IsKeyPressed(k Key) bool {
 
 func IsKeyReleased(k Key) bool {
 	return !inputManager.currKeys[grenderKeyToGlfw[k]] && inputManager.prevKeys[grenderKeyToGlfw[k]]
+}
+
+type MouseButton uint16
+
+const (
+	MouseLeft MouseButton = iota
+	MouseRight
+	MouseMiddle
+	Mouse4
+	Mouse5
+	Mouse6
+	Mouse7
+	Mouse8
+)
+
+var grenderMouseToGlfw = map[MouseButton]glfw.MouseButton{
+	MouseLeft:   glfw.MouseButton1,
+	MouseRight:  glfw.MouseButton2,
+	MouseMiddle: glfw.MouseButton3,
+	Mouse4:      glfw.MouseButton4,
+	Mouse5:      glfw.MouseButton5,
+	Mouse6:      glfw.MouseButton6,
+	Mouse7:      glfw.MouseButton7,
+	Mouse8:      glfw.MouseButton8,
+}
+
+func IsMouseButtonPressed(b MouseButton) bool {
+	return inputManager.currButtons[grenderMouseToGlfw[b]] && !inputManager.prevButtons[grenderMouseToGlfw[b]]
+}
+
+func IsMouseButtonDown(b MouseButton) bool {
+	return inputManager.currButtons[grenderMouseToGlfw[b]]
+}
+
+func IsMouseButtonReleased(b MouseButton) bool {
+	return !inputManager.currButtons[grenderMouseToGlfw[b]] && inputManager.prevButtons[grenderMouseToGlfw[b]]
+}
+
+func IsMouseButtonUp(b MouseButton) bool {
+	return !inputManager.currButtons[grenderMouseToGlfw[b]]
 }

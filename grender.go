@@ -38,8 +38,10 @@ func CreateWindow(width, height uint32, title string) error {
 	windowWidth = width
 	windowHeight = height
 	inputManager = &Input{
-		prevKeys: make(map[glfw.Key]bool),
-		currKeys: make(map[glfw.Key]bool),
+		prevKeys:    make(map[glfw.Key]bool),
+		currKeys:    make(map[glfw.Key]bool),
+		prevButtons: make(map[glfw.MouseButton]bool),
+		currButtons: make(map[glfw.MouseButton]bool),
 	}
 
 	return nil
