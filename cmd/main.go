@@ -42,7 +42,10 @@ func main() {
 
 	defer r.Cleanup()
 
+	grender.SetTargetFPS(60)
+
 	for grender.WindowShouldNotClose() {
+		log.Println(1 / r.GetDeltaTime())
 		// loop logic here
 		r.Begin()
 

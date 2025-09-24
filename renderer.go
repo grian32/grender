@@ -3,6 +3,8 @@ package grender
 import (
 	"grender/util"
 	"log"
+	"runtime"
+	"time"
 	"unsafe"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
@@ -11,13 +13,18 @@ import (
 )
 
 type Renderer struct {
-	Atlas      *Atlas
-	vao        uint32
-	vbo        uint32
-	ebo        uint32
-	atlasVBO   uint32
-	shader     uint32
-	atlasRects []float32
+	Atlas         *Atlas
+	vao           uint32
+	vbo           uint32
+	ebo           uint32
+	atlasVBO      uint32
+	shader        uint32
+	lastFrameTime float64
+	currFrameTime float64
+	deltaTime     float64
+	updateTime    float64
+	drawTime      float64
+	atlasRects    []float32
 }
 
 const vertShader = `#version 330 core
@@ -121,6 +128,8 @@ func NewRenderer(atlas *Atlas) (*Renderer, error) {
 	projLoc := gl.GetUniformLocation(r.shader, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projLoc, 1, false, &projection[0])
 
+	r.lastFrameTime = glfw.GetTime()
+
 	return r, nil
 }
 
@@ -165,6 +174,10 @@ func (r *Renderer) Begin() {
 	gl.Uniform1i(loc, 0)
 
 	r.atlasRects = r.atlasRects[:0]
+
+	r.currFrameTime = glfw.GetTime()
+	r.updateTime = r.currFrameTime - r.lastFrameTime
+	r.lastFrameTime = r.currFrameTime
 }
 
 func (r *Renderer) End() {
@@ -183,7 +196,28 @@ func (r *Renderer) End() {
 	gl.UseProgram(0)
 
 	glfwWindow.SwapBuffers()
+
+	r.currFrameTime = glfw.GetTime()
+	r.drawTime = r.currFrameTime - r.lastFrameTime
+	r.lastFrameTime = r.currFrameTime
+
+	r.deltaTime = r.drawTime + r.updateTime
+
+	if r.deltaTime < targetDelta {
+		WaitTime(targetDelta - r.deltaTime)
+
+		r.currFrameTime = glfw.GetTime()
+		waitTime := r.currFrameTime - r.lastFrameTime
+		r.lastFrameTime = r.currFrameTime
+
+		r.deltaTime += waitTime
+	}
+
 	glfw.PollEvents()
+}
+
+func (r *Renderer) GetDeltaTime() float64 {
+	return r.deltaTime
 }
 
 // Cleanup should be defer after grender.CloseWindow()
@@ -194,4 +228,25 @@ func (r *Renderer) Cleanup() {
 	gl.DeleteBuffers(1, &r.ebo)
 	gl.DeleteProgram(r.shader)
 	gl.DeleteTextures(1, &r.Atlas.texId)
+}
+
+// WaitTime conceptually from https://github.com/raysan5/raylib/blob/9e39788e077f1d35c5fe54600f2143423a80bb3d/src/rcore.c#L1671
+func WaitTime(seconds float64) {
+	if seconds < 0 {
+		return
+	}
+
+	start := time.Now()
+	targetDuration := time.Duration(seconds * float64(time.Second))
+	destinationTime := start.Add(targetDuration)
+
+	sleepDuration := time.Duration(float64(targetDuration) * 0.95)
+
+	if sleepDuration > 0 {
+		time.Sleep(sleepDuration)
+	}
+
+	for time.Now().Before(destinationTime) {
+		runtime.Gosched()
+	}
 }

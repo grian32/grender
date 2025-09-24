@@ -9,6 +9,7 @@ import (
 
 var glfwWindow *glfw.Window
 var windowWidth, windowHeight uint32
+var targetDelta float64
 
 func init() {
 	runtime.LockOSThread()
@@ -41,6 +42,10 @@ func CreateWindow(width, height uint32, title string) error {
 
 func WindowShouldNotClose() bool {
 	return !glfwWindow.ShouldClose()
+}
+
+func SetTargetFPS(fps uint32) {
+	targetDelta = 1.0 / float64(fps)
 }
 
 func CloseWindow() {
