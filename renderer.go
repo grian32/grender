@@ -214,6 +214,7 @@ func (r *Renderer) End() {
 	}
 
 	glfw.PollEvents()
+	inputManager.Update()
 }
 
 func (r *Renderer) GetDeltaTime() float64 {

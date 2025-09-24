@@ -10,6 +10,7 @@ import (
 var glfwWindow *glfw.Window
 var windowWidth, windowHeight uint32
 var targetDelta float64
+var inputManager *Input
 
 func init() {
 	runtime.LockOSThread()
@@ -36,6 +37,10 @@ func CreateWindow(width, height uint32, title string) error {
 	glfwWindow = window
 	windowWidth = width
 	windowHeight = height
+	inputManager = &Input{
+		prevKeys: make(map[glfw.Key]bool),
+		currKeys: make(map[glfw.Key]bool),
+	}
 
 	return nil
 }

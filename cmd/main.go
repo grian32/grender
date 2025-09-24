@@ -3,6 +3,8 @@ package main
 import (
 	"grender"
 	"log"
+
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func main() {
@@ -45,8 +47,17 @@ func main() {
 	grender.SetTargetFPS(60)
 
 	for grender.WindowShouldNotClose() {
-		log.Println(1 / r.GetDeltaTime())
-		// loop logic here
+		if grender.IsKeyPressed(glfw.KeyX) {
+			log.Printf("pressed x\n")
+		}
+		if grender.IsKeyDown(glfw.KeyJ) {
+			log.Printf("down j\n")
+			x, y := grender.GetMousePos()
+			log.Printf("mouse pos: %.3f, %.3f", x, y)
+		}
+		if grender.IsKeyReleased(glfw.KeyN) {
+			log.Printf("release n\n")
+		}
 		r.Begin()
 
 		r.DrawTexture(tex1, 0, 0)
