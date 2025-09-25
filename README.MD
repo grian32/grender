@@ -19,6 +19,11 @@ GRender was created as a replacement for Raylib for [GRPG](https://github.com/gr
 - Text Rendering
 - API for providing lighting along with the necessary shaders.
 
+## Limitations
+
+- Only the 95 printable ASCII characters are supported.
+- Maximum font size is ~70-79pt. This is due to each font/size combination generating an atlas of size 1024x1024 as to not blow up VRAM usage, large sizes simply don't fit.
+
 ## Examples
 
 ```go

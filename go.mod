@@ -9,4 +9,6 @@ require (
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20250301202403-da16c1255728 // indirect
 	github.com/go-gl/mathgl v1.2.0 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect
+	golang.org/x/image v0.31.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 )
