@@ -35,7 +35,12 @@ func main() {
 
 	atlas.Upload()
 
-	r, err := grender.NewRenderer(atlas)
+	arial, err := grender.NewFont("../testdata/arial.ttf", 24)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	r, err := grender.NewRenderer(atlas, []*grender.Font{arial})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -80,6 +85,8 @@ func main() {
 		r.DrawTexture(tex2, uint32(tex1.Size.X), 0)
 		r.DrawTexture(tex3, uint32(tex1.Size.X+tex2.Size.X), 0)
 		r.DrawColorTexture(colorTex, uint32(tex1.Size.X+tex2.Size.X+tex3.Size.X), 0, 50, 50)
+
+		r.DrawText(arial, "hello, world!", 0, uint32(tex2.Size.Y))
 
 		r.End()
 	}

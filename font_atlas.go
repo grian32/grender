@@ -49,7 +49,7 @@ func (fa *FontAtlas) AddAsciiGlyphs(face font.Face) error {
 
 		d := &font.Drawer{
 			Dst:  fa.Atlas.Img,
-			Src:  image.NewUniform(color.Black),
+			Src:  image.NewUniform(color.White),
 			Face: face,
 			Dot: fixed.Point26_6{
 				X: dotX,
@@ -62,8 +62,8 @@ func (fa *FontAtlas) AddAsciiGlyphs(face font.Face) error {
 		fa.Positions[ch] = RectP{
 			X: newNode.X,
 			Y: newNode.Y,
-			W: newNode.X + newNode.W,
-			H: newNode.Y + newNode.H,
+			W: newNode.X,
+			H: newNode.Y,
 		}
 	}
 

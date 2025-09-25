@@ -8,8 +8,9 @@ import (
 )
 
 type Font struct {
-	Atlas *FontAtlas
-	Face  font.Face
+	Atlas      *FontAtlas
+	AtlasLayer uint32
+	Face       font.Face
 }
 
 func NewFont(path string, size float64) (*Font, error) {
@@ -28,8 +29,14 @@ func NewFont(path string, size float64) (*Font, error) {
 		Hinting: font.HintingNone,
 	})
 
+	fa := NewFontAtlas(1024)
+	err = fa.AddAsciiGlyphs(face)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Font{
-		Atlas: NewFontAtlas(1024),
+		Atlas: fa,
 		Face:  face,
 	}, nil
 }
