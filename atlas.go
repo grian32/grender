@@ -168,7 +168,7 @@ func (a *Atlas) findPositionForNewNode(width, height, bestShortSideFit, bestLong
 		if a.FreeRects[i].W >= width && a.FreeRects[i].H >= height {
 			leftoverHoriz := util.AbsI32(a.FreeRects[i].W - width)
 			leftoverVert := util.AbsI32(a.FreeRects[i].H - height)
-			shortSideFit := max(leftoverHoriz, leftoverVert)
+			shortSideFit := min(leftoverHoriz, leftoverVert)
 			longSideFit := max(leftoverHoriz, leftoverVert)
 
 			if shortSideFit < bestShortSideFit || (shortSideFit == bestShortSideFit && longSideFit < bestLongSideFit) {
