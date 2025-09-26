@@ -38,14 +38,14 @@ func (fa *FontAtlas) AddAsciiGlyphs(face font.Face) error {
 
 		// we pad by 1px due to GlyphBounds presumably not accounting for AA pixels in measurement
 
-		width := ((bounds.Max.X - bounds.Min.X) >> 6) + 2
-		height := ((bounds.Max.Y - bounds.Min.Y) >> 6) + 2
+		width := ((bounds.Max.X - bounds.Min.X) >> 6) + 4
+		height := ((bounds.Max.Y - bounds.Min.Y) >> 6) + 4
 
 		newNode := fa.Atlas.findPositionForNewNode(int32(width), int32(height), int32(score1), int32(score2))
 		fa.Atlas.placeRect(newNode)
 
-		dotX := fixed.Int26_6(int(newNode.X+1)-bounds.Min.X.Floor()) << 6
-		dotY := fixed.Int26_6(int(newNode.Y+1)-bounds.Min.Y.Floor()) << 6
+		dotX := fixed.Int26_6(int(newNode.X+2)-bounds.Min.X.Floor()) << 6
+		dotY := fixed.Int26_6(int(newNode.Y+2)-bounds.Min.Y.Floor()) << 6
 
 		d := &font.Drawer{
 			Dst:  fa.Atlas.Img,
@@ -62,8 +62,8 @@ func (fa *FontAtlas) AddAsciiGlyphs(face font.Face) error {
 		fa.Positions[ch] = RectP{
 			X: newNode.X,
 			Y: newNode.Y,
-			W: newNode.X,
-			H: newNode.Y,
+			W: newNode.W,
+			H: newNode.H,
 		}
 	}
 

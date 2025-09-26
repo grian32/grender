@@ -89,5 +89,6 @@ func main() {
 		r.DrawText(arial, "hello, world!", 0, uint32(tex2.Size.Y))
 
 		r.End()
+
 	}
 }

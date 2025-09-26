@@ -3,6 +3,7 @@ package grender
 import (
 	"grender/util"
 	"log"
+	"math"
 	"runtime"
 	"time"
 	"unsafe"
@@ -210,28 +211,48 @@ func (r *Renderer) DrawColorTexture(t *Texture, x, y, w, h uint32) {
 	)
 }
 
+var counter = 0
+
 // DrawText skips non-ascii characters
 func (r *Renderer) DrawText(font *Font, text string, x, y uint32) {
+	var nextX = int32(x)
+
+	var tallest int32 = math.MinInt32
+
+	for _, c := range text {
+		if tallest < font.Atlas.Positions[c].H {
+			tallest = font.Atlas.Positions[c].H
+		}
+	}
+
 	for _, c := range text {
 		// non ascii
 		if c < 32 || c > 127 {
 			continue
 		}
 
-		// TODO: text rendering going wrong here possibly?
 		atlasPos := font.Atlas.Positions[c]
 		atlasOffsetX := float32(atlasPos.X) / float32(font.Atlas.Size)
 		atlasOffsetY := float32(atlasPos.Y) / float32(font.Atlas.Size)
 		atlasScaleX := float32(atlasPos.W) / float32(font.Atlas.Size)
 		atlasScaleY := float32(atlasPos.H) / float32(font.Atlas.Size)
 
+		yPos := y - uint32(atlasPos.H-tallest)
+
+		if counter < len(text) {
+			log.Printf("atlasPos=%v; atlasOffset = %f, %f; atlasScale = %f, %f; yPos = %d, tallest=%d", atlasPos, atlasOffsetX, atlasOffsetY, atlasScaleX, atlasScaleY, yPos, tallest)
+			counter++
+		}
+
 		r.atlasRects = append(r.atlasRects,
 			atlasOffsetX, atlasOffsetY,
 			atlasScaleX, atlasScaleY,
-			float32(x), float32(y),
+			float32(nextX), float32(yPos),
 			float32(atlasPos.W), float32(atlasPos.H),
 			1.0, float32(font.AtlasLayer), // render type, atlas id
 		)
+
+		nextX += atlasPos.W
 	}
 }
 

@@ -34,6 +34,9 @@ func TestFontAtlas(t *testing.T) {
 		log.Fatalln(err)
 	}
 
+	//f, _ := os.Create("./testdata/font.out.jxl")
+	//_ = jpegxl.Encode(f, fa.Atlas.Img)
+
 	enc := &bytes.Buffer{}
 	err = jpegxl.Encode(enc, fa.Atlas.Img)
 	if err != nil {
