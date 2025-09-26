@@ -5,7 +5,9 @@ Provides a simple API that allows the rendering of textures and fonts, handling 
 
 Currently, JPEG XL is the only format supported for texture loading, JPEG XL is a modern format that is superior to traditional formats. Support for traditional formats may be added in the future.
 
-GRender was created as a replacement for Raylib for [GRPG](https://github.com/grian32/grpg). You may notice some similarities.
+## Current Status
+
+GRender is a WIP side-project at this time. I wouldn't reccomend using it as is, unless you don't requires Text Rendering capabilities. I would recommend using something like [ebitengine](https://ebitengine.org/).
 
 ## Current Features
 
